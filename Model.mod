@@ -66,6 +66,10 @@ subject to UnderTime{d in Days}:UT[d] >= WorkingHours[d]-sum{p in Patterns} x[p,
 #Ward stay
 subject to WardStay{p in Patterns, d in Days: d <= (card(Days)-card(WardDays))}: card(WardDays)*x[p,d]=sum{wd in WardDays} y[p,d+wd,wd];
 
+#Costraints that are needed:
+  #Guarantee that each patient does not stay longer than expected
+  #Make sure that beds are available for a given plan
+  #Force the recovery to start only once
 
 #maximize obj: sum{d in Days, p in Patterns}x[p,d];
 minimize Objective: sum{d in Days}(OT[d]+UT[d]);
