@@ -43,7 +43,7 @@ param WardStayProb{Surgeries, WardDays, SurgeryType};
 # Assignment on patterns to days
 var x {Patterns, Days} binary;
 #Decision variable for ward stay
-var y{Patterns, Days, WardDays } binary;
+var y{Patterns, Days, WardDays } >= 0, <= 1;
 #Overtime variable
 var OT{Days}>=0;
 #Undertime variable
@@ -52,18 +52,19 @@ var UT{Days}>=0;
 #-----------------------------------MODEL---------------------------------------------------#
 
 #One pattern per day
-subject to OnePatternPerDay{d in Days}: sum{p in Patterns} x[p, d]<=1;
+subject to OnePatternPerDay{d in Days}: sum{p in Patterns} x[p, d] = 1;
 
 #Meet the Demand
-subject to MeetDemand{s in Surgeries, t in SurgeryType}: sum{p in Patterns, d in Days}x[p,d]*a[p,s,t] = Demand[s,t];
+subject to MeetDemand{s in Surgeries, t in SurgeryType}: sum{p in Patterns, d in Days}x[p,d]*a[p,s,t] >= Demand[s,t];
 
-#OverTime
+# OverTime
 subject to OverTime{d in Days}: OT[d] >= sum{p in Patterns} x[p,d]*SurgeryTime[p]-WorkingHours[d];
-#Undertime
+
+# Undertime
 subject to UnderTime{d in Days}:UT[d] >= WorkingHours[d]-sum{p in Patterns} x[p,d]*SurgeryTime[p];
 
 #Ward stay
-#subject to WardStay{p in Patterns, d in Days}:m*x[p,d]=sum{wd in WardDays: wd=0 and wd<=m} y[p,d+wd,wd];
+subject to WardStay{p in Patterns, d in Days: d <= (card(Days)-card(WardDays))}: card(WardDays)*x[p,d]=sum{wd in WardDays} y[p,d+wd,wd];
 
 
 #maximize obj: sum{d in Days, p in Patterns}x[p,d];
