@@ -54,6 +54,9 @@ var UT{Days}>=0;
 #One pattern per day
 subject to OnePatternPerDay{d in Days}: sum{p in Patterns} x[p, d] = 1;
 
+#Certaint patterns are just only available certain days due  doctors availability
+subject to OnlyCertainDays{p in Patterns: card(PatternNotAvail[p])>0}: sum{d in PatternNotAvail[p]} x[p,d]=0;
+
 #Meet the Demand
 subject to MeetDemand{s in Surgeries, t in SurgeryType}: sum{p in Patterns, d in Days}x[p,d]*a[p,s,t] >= Demand[s,t];
 
