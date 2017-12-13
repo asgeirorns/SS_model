@@ -37,6 +37,9 @@ param Demand{Surgeries, SurgeryType} default 0;
 #Note that Days and WardDays are different sets
 param WardStayProb{Surgeries, WardDays, SurgeryType};
 
+#Days when certaint patterns are not available
+set PatternNotAvail{p in Patterns} within Days default {};
+
 
 #----------------------------------Decision variables----------------------------------------#
 
@@ -84,6 +87,8 @@ solve;
 
 data;
 
+set PatternNotAvail[1] := 1 3 5 7 9;
+set PatternNotAvail[2] := 2 4 6 8 10;
 
 param a :=
 1 A elective 2
