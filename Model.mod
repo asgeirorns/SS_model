@@ -1,5 +1,5 @@
 #Model for general surgery
-#Updated: 12/12/17 12:10 by aos
+#Updated: 13/12/17 13:12 by aos
 
 
 
@@ -7,6 +7,7 @@
 #Numbers of days in the planning horizon
 param n;
 param m;
+param MaxDailyWardLoad :=5;
 
 # set of available patterns
 set Patterns;
@@ -68,6 +69,13 @@ subject to OverTime{d in Days}: OT[d] >= sum{p in Patterns} x[p,d]*SurgeryTime[p
 
 # Undertime
 subject to UnderTime{d in Days}:UT[d] >= WorkingHours[d]-sum{p in Patterns} x[p,d]*SurgeryTime[p];
+
+
+#Ward load - Admission of p or less patients to a ward on daily basis.
+#comment: Maybe it is nice to have this constraint if they want to have an upper limit on the daily number of patients 
+#         admitted to the ward.       
+subject to NoOverload{d in Days}: sum{s in Surgeries, t in SurgeryType,p in Patterns} x[p,d]*a[p,s,t] <= MaxDailyWardLoad;
+
 
 #Ward stay
 subject to WardStay{p in Patterns, d in Days: d <= (card(Days)-card(WardDays))}: card(WardDays)*x[p,d]=sum{wd in WardDays} y[p,d+wd,wd];
