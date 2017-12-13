@@ -73,7 +73,8 @@ subject to UnderTime{d in Days}:UT[d] >= WorkingHours[d]-sum{p in Patterns} x[p,
 
 #Ward load - Admission of p or less patients to a ward on daily basis.
 #comment: Maybe it is nice to have this constraint if they want to have an upper limit on the daily number of patients 
-#         admitted to the ward.       
+#         admitted to the ward - aos 
+#comment: This is not working properly since some patients don't need to go to the ward after a surgery. 
 subject to NoOverload{d in Days}: sum{s in Surgeries, t in SurgeryType,p in Patterns} x[p,d]*a[p,s,t] <= MaxDailyWardLoad;
 
 
